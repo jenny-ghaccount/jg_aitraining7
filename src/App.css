@@ -76,6 +76,14 @@
   transition: width 1s linear, background-color 0.5s;
 }
 
+.hud__timer-fill--warn {
+  background: var(--timer-warn);
+}
+
+.hud__timer-value--warn {
+  color: var(--timer-warn);
+}
+
 /* === Playfield === */
 .playfield {
   flex: 1;
@@ -93,6 +101,47 @@
   text-align: center;
   pointer-events: none;
   user-select: none;
+}
+
+/* === Waste Items === */
+.waste-item {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 3px solid rgba(0, 0, 0, 0.12);
+  border-radius: 14px;
+  cursor: grab;
+  user-select: none;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+  transition: transform 0.12s, box-shadow 0.12s;
+  z-index: 5;
+}
+
+.waste-item:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+}
+
+.waste-item:active {
+  cursor: grabbing;
+  transform: scale(1.12);
+}
+
+.waste-item__emoji {
+  font-size: 36px;
+  line-height: 1;
+}
+
+.waste-item__label {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-dark);
+  white-space: nowrap;
 }
 
 /* === Bins === */
@@ -148,4 +197,98 @@
 
 .bin--organic {
   background: var(--bin-organic);
+}
+
+.bin--highlight {
+  transform: scale(1.08);
+  border-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.4), 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* === Round Over === */
+.round-over {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.round-over__title {
+  font-family: var(--font-display);
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.round-over__score {
+  font-family: var(--font-display);
+  font-size: 24px;
+  color: var(--score-color);
+  margin: 0;
+}
+
+.round-over__btn {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  padding: 12px 32px;
+  border: none;
+  border-radius: 12px;
+  background: var(--score-color);
+  color: var(--text-light);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.round-over__btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* === Wrong-Drop Flash Overlay === */
+.flash-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--flash-red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  pointer-events: none;
+  animation: flash-in 1.2s ease-out forwards;
+}
+
+@keyframes flash-in {
+  0% { opacity: 1; }
+  60% { opacity: 0.9; }
+  100% { opacity: 0; }
+}
+
+.flash-overlay__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  animation: flash-pop 0.4s ease-out;
+}
+
+@keyframes flash-pop {
+  0% { transform: scale(0.5); opacity: 0; }
+  60% { transform: scale(1.15); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.flash-overlay__smiley {
+  font-size: 80px;
+  line-height: 1;
+}
+
+.flash-overlay__text {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: white;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
