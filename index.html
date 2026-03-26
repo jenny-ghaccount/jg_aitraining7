@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Earth Month – Sustainability Challenge Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="header-content">
+      <span class="earth-emoji" aria-hidden="true">🌍</span>
+      <h1>Earth Month</h1>
+      <p class="tagline">30 Days of Sustainable Living</p>
+    </div>
+  </header>
+
+  <main>
+    <!-- Progress summary -->
+    <section class="summary-banner" aria-live="polite">
+      <div class="summary-item">
+        <span class="summary-number" id="completed-count">0</span>
+        <span class="summary-label">Challenges<br>Completed</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-number" id="points-total">0</span>
+        <span class="summary-label">Eco-Points<br>Earned</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-number" id="co2-saved">0</span>
+        <span class="summary-label">kg CO₂<br>Saved (est.)</span>
+      </div>
+    </section>
+
+    <!-- Daily Challenges -->
+    <section class="section" id="challenges-section">
+      <h2>🌿 30-Day Eco-Challenges</h2>
+      <p class="section-desc">Check off each challenge as you complete it. Every action counts!</p>
+
+      <div class="filter-bar">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="transport">Transport</button>
+        <button class="filter-btn" data-filter="food">Food</button>
+        <button class="filter-btn" data-filter="energy">Energy</button>
+        <button class="filter-btn" data-filter="waste">Waste</button>
+        <button class="filter-btn" data-filter="water">Water</button>
+      </div>
+
+      <div class="challenge-grid" id="challenge-grid" role="list">
+        <!-- Populated by app.js -->
+      </div>
+    </section>
+
+    <!-- Carbon Footprint Estimator -->
+    <section class="section" id="footprint-section">
+      <h2>🌡️ Quick Carbon Footprint Estimator</h2>
+      <p class="section-desc">Answer a few questions to estimate your monthly carbon footprint and see how your challenges reduce it.</p>
+
+      <form id="footprint-form" novalidate>
+        <div class="form-group">
+          <label for="transport-mode">Primary transport</label>
+          <select id="transport-mode">
+            <option value="car-petrol">Car (petrol)</option>
+            <option value="car-diesel">Car (diesel)</option>
+            <option value="car-electric">Car (electric)</option>
+            <option value="public-transit">Public transit</option>
+            <option value="bike-walk">Bike / Walk</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="km-per-week">Weekly distance (km)</label>
+          <input type="number" id="km-per-week" min="0" max="2000" value="50" />
+        </div>
+
+        <div class="form-group">
+          <label for="diet-type">Diet type</label>
+          <select id="diet-type">
+            <option value="meat-heavy">Meat-heavy</option>
+            <option value="average" selected>Average (some meat)</option>
+            <option value="vegetarian">Vegetarian</option>
+            <option value="vegan">Vegan</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="energy-kwh">Monthly home energy use (kWh)</label>
+          <input type="number" id="energy-kwh" min="0" max="5000" value="300" />
+        </div>
+
+        <button type="submit" class="btn-primary">Calculate Footprint</button>
+      </form>
+
+      <div class="footprint-result hidden" id="footprint-result" aria-live="polite">
+        <h3>Your estimated monthly footprint</h3>
+        <div class="footprint-gauge">
+          <div class="gauge-bar">
+            <div class="gauge-fill" id="gauge-fill"></div>
+          </div>
+          <div class="gauge-labels">
+            <span>0</span><span>200</span><span>400</span><span>600 kg CO₂</span>
+          </div>
+        </div>
+        <p class="footprint-value">
+          <strong id="footprint-kg">0</strong> kg CO₂ / month
+        </p>
+        <p class="footprint-tip" id="footprint-tip"></p>
+      </div>
+    </section>
+
+    <!-- Sustainability Tips -->
+    <section class="section" id="tips-section">
+      <h2>💡 Sustainability Tips</h2>
+      <div class="tips-carousel">
+        <button class="carousel-btn" id="prev-tip" aria-label="Previous tip">&#8249;</button>
+        <div class="tip-card" id="tip-card" aria-live="polite">
+          <!-- Populated by app.js -->
+        </div>
+        <button class="carousel-btn" id="next-tip" aria-label="Next tip">&#8250;</button>
+      </div>
+      <div class="tip-dots" id="tip-dots" aria-hidden="true">
+        <!-- Populated by app.js -->
+      </div>
+    </section>
+
+    <!-- Impact Facts -->
+    <section class="section facts-section">
+      <h2>📊 Did You Know?</h2>
+      <div class="facts-grid">
+        <div class="fact-card">
+          <span class="fact-icon">🚗</span>
+          <p>Switching to public transit for one year can save up to <strong>2.4 tonnes</strong> of CO₂.</p>
+        </div>
+        <div class="fact-card">
+          <span class="fact-icon">🥩</span>
+          <p>Cutting meat consumption by half reduces your diet-related emissions by roughly <strong>35%</strong>.</p>
+        </div>
+        <div class="fact-card">
+          <span class="fact-icon">💡</span>
+          <p>Replacing 10 incandescent bulbs with LEDs saves around <strong>100 kg CO₂</strong> per year.</p>
+        </div>
+        <div class="fact-card">
+          <span class="fact-icon">🚿</span>
+          <p>A 4-minute shower uses up to <strong>40 litres</strong> less water than a 10-minute one.</p>
+        </div>
+        <div class="fact-card">
+          <span class="fact-icon">🛍️</span>
+          <p>Reusable bags used 10 times already beat a single-use plastic bag's carbon footprint.</p>
+        </div>
+        <div class="fact-card">
+          <span class="fact-icon">🌳</span>
+          <p>A single mature tree absorbs about <strong>21 kg</strong> of CO₂ per year.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>🌱 Every small action adds up. Happy Earth Month! 🌎</p>
+    <p class="footer-note">Emissions estimates are approximations based on average UK/EU factors.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
