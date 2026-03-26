@@ -23,6 +23,7 @@ function App() {
   const [timeLeft, setTimeLeft] = useState(ROUND_SECONDS)
   const [running, setRunning] = useState(true)
   const [score, setScore] = useState(0)
+  const [bestScore, setBestScore] = useState(0)
   const [activeItems, setActiveItems] = useState([])
   const [draggedItem, setDraggedItem] = useState(null)
   const [highlightedBin, setHighlightedBin] = useState(null)
@@ -41,6 +42,7 @@ function App() {
         if (t <= 1) {
           clearInterval(id)
           setRunning(false)
+          setActiveItems([])
           return 0
         }
         return t - 1
@@ -48,6 +50,13 @@ function App() {
     }, 1000)
     return () => clearInterval(id)
   }, [running, timeLeft <= 0])
+
+  // Track best score when round ends
+  useEffect(() => {
+    if (!running && timeLeft === 0) {
+      setBestScore((prev) => Math.max(prev, score))
+    }
+  }, [running, timeLeft])
 
   // Spawn items periodically
   useEffect(() => {
@@ -199,8 +208,13 @@ function App() {
           <div className="round-over">
             <h2 className="round-over__title">⏰ Time's up!</h2>
             <p className="round-over__score">Final score: {score}</p>
+            {bestScore > 0 && (
+              <p className="round-over__best">
+                {score >= bestScore ? '🎉 New best!' : `Best this session: ${bestScore}`}
+              </p>
+            )}
             <button className="round-over__btn" onClick={handleRestart}>
-              Play again
+              ▶ Play again
             </button>
           </div>
         )}
