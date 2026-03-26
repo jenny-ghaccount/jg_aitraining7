@@ -1,0 +1,522 @@
+/* ============================================================
+   Earth Month – Sustainability Challenge Tracker
+   style.css
+   ============================================================ */
+
+/* ---------- Reset & base ---------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --green-dark:   #1a5c2e;
+  --green-mid:    #2e8b57;
+  --green-light:  #52c978;
+  --green-pale:   #d4edda;
+  --earth-brown:  #6b4226;
+  --sky-blue:     #e8f4f8;
+  --white:        #ffffff;
+  --text-dark:    #1e2a1e;
+  --text-mid:     #3d5a3d;
+  --text-light:   #6c8c6c;
+  --shadow:       0 2px 12px rgba(30, 42, 30, 0.12);
+  --radius:       12px;
+  --transition:   0.25s ease;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: linear-gradient(160deg, #e8f5e9 0%, #f1f8e9 50%, #e0f2f1 100%);
+  background-attachment: fixed;
+  color: var(--text-dark);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ---------- Header ---------- */
+header {
+  background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-mid) 100%);
+  color: var(--white);
+  text-align: center;
+  padding: 3rem 1.5rem 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+.header-content {
+  position: relative;
+  z-index: 1;
+}
+
+.earth-emoji {
+  font-size: 4rem;
+  display: block;
+  margin-bottom: 0.5rem;
+  animation: spin 20s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+header h1 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.tagline {
+  font-size: 1.15rem;
+  opacity: 0.88;
+  margin-top: 0.4rem;
+  font-style: italic;
+}
+
+/* ---------- Summary banner ---------- */
+.summary-banner {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  padding: 1.5rem 1rem;
+  background: var(--green-dark);
+  color: var(--white);
+}
+
+.summary-item {
+  text-align: center;
+  min-width: 100px;
+}
+
+.summary-number {
+  display: block;
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: var(--green-light);
+  line-height: 1;
+}
+
+.summary-label {
+  font-size: 0.8rem;
+  opacity: 0.85;
+  line-height: 1.3;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ---------- Main layout ---------- */
+main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+}
+
+.section {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+
+.section h2 {
+  font-size: 1.5rem;
+  color: var(--green-dark);
+  margin-bottom: 0.5rem;
+}
+
+.section-desc {
+  color: var(--text-light);
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+
+/* ---------- Filter bar ---------- */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.filter-btn {
+  padding: 0.35rem 0.9rem;
+  border: 2px solid var(--green-mid);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--green-mid);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 600;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+  background: var(--green-mid);
+  color: var(--white);
+}
+
+/* ---------- Challenge grid ---------- */
+.challenge-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.challenge-card {
+  border: 2px solid var(--green-pale);
+  border-radius: var(--radius);
+  padding: 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+  background: #fafffe;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.challenge-card:hover {
+  border-color: var(--green-mid);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.challenge-card.completed {
+  background: var(--green-pale);
+  border-color: var(--green-mid);
+}
+
+.challenge-card.completed::after {
+  content: '✓';
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  font-size: 1.2rem;
+  color: var(--green-mid);
+  font-weight: 900;
+}
+
+.challenge-card.hidden-card {
+  display: none;
+}
+
+.challenge-day {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-light);
+}
+
+.challenge-icon {
+  font-size: 1.8rem;
+}
+
+.challenge-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.challenge-desc {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  line-height: 1.4;
+}
+
+.challenge-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 0.4rem;
+}
+
+.challenge-points {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--green-mid);
+}
+
+.challenge-badge {
+  font-size: 0.68rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.badge-transport { background: #dbeafe; color: #1e40af; }
+.badge-food      { background: #fef3c7; color: #92400e; }
+.badge-energy    { background: #fce7f3; color: #9d174d; }
+.badge-waste     { background: #ede9fe; color: #5b21b6; }
+.badge-water     { background: #e0f2fe; color: #075985; }
+
+/* ---------- Footprint form ---------- */
+#footprint-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  align-items: end;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-mid);
+}
+
+.form-group select,
+.form-group input {
+  padding: 0.55rem 0.75rem;
+  border: 2px solid #d1e7d1;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: var(--text-dark);
+  background: var(--white);
+  transition: border-color var(--transition);
+  width: 100%;
+}
+
+.form-group select:focus,
+.form-group input:focus {
+  outline: none;
+  border-color: var(--green-mid);
+}
+
+.btn-primary {
+  padding: 0.65rem 1.5rem;
+  background: var(--green-mid);
+  color: var(--white);
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background var(--transition);
+  align-self: end;
+}
+
+.btn-primary:hover {
+  background: var(--green-dark);
+}
+
+/* ---------- Footprint result ---------- */
+.footprint-result {
+  margin-top: 1.75rem;
+  padding: 1.5rem;
+  background: var(--green-pale);
+  border-radius: var(--radius);
+  animation: fadeIn 0.4s ease;
+}
+
+.footprint-result.hidden {
+  display: none;
+}
+
+.footprint-result h3 {
+  color: var(--green-dark);
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.footprint-gauge {
+  margin-bottom: 0.75rem;
+}
+
+.gauge-bar {
+  height: 20px;
+  background: #c8e6c9;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 0.25rem;
+}
+
+.gauge-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--green-light), #f59e0b, #ef4444);
+  border-radius: 999px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 0%;
+}
+
+.gauge-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--text-light);
+}
+
+.footprint-value {
+  font-size: 1.15rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-dark);
+}
+
+.footprint-tip {
+  font-size: 0.9rem;
+  color: var(--green-dark);
+  font-style: italic;
+}
+
+/* ---------- Tips carousel ---------- */
+.tips-carousel {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.carousel-btn {
+  flex-shrink: 0;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  border: 2px solid var(--green-mid);
+  background: transparent;
+  color: var(--green-mid);
+  font-size: 1.4rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  line-height: 1;
+}
+
+.carousel-btn:hover {
+  background: var(--green-mid);
+  color: var(--white);
+}
+
+.tip-card {
+  flex: 1;
+  background: linear-gradient(135deg, #f0fdf4, #e8f5e9);
+  border: 2px solid var(--green-pale);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  min-height: 130px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.tip-category {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--green-mid);
+  margin-bottom: 0.4rem;
+}
+
+.tip-text {
+  font-size: 1rem;
+  color: var(--text-dark);
+  line-height: 1.55;
+}
+
+.tip-icon {
+  font-size: 1.6rem;
+  margin-bottom: 0.4rem;
+}
+
+.tip-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #c8e6c9;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.dot.active {
+  background: var(--green-mid);
+}
+
+/* ---------- Facts ---------- */
+.facts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.fact-card {
+  background: var(--sky-blue);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  text-align: center;
+}
+
+.fact-icon {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.fact-card p {
+  font-size: 0.88rem;
+  color: var(--text-mid);
+  line-height: 1.5;
+}
+
+/* ---------- Footer ---------- */
+footer {
+  text-align: center;
+  padding: 2rem 1rem;
+  background: var(--green-dark);
+  color: rgba(255,255,255,0.85);
+  font-size: 0.95rem;
+}
+
+.footer-note {
+  font-size: 0.75rem;
+  opacity: 0.6;
+  margin-top: 0.3rem;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 600px) {
+  .section { padding: 1.25rem; }
+  #footprint-form { grid-template-columns: 1fr; }
+  .facts-grid { grid-template-columns: 1fr 1fr; }
+}
