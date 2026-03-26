@@ -1,50 +1,16 @@
-# Recycle Rush
+# React + Vite
 
-Recycle Rush is a browser-based capstone project focused on recycling awareness through a playful drag-and-drop sorting game.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Project Summary
-The player sorts flying waste items into the correct bin before time runs out. Correct answers increase the score. Wrong answers trigger a red warning flash, show a sad smiley, and reset the score to 0.
+Currently, two official plugins are available:
 
-The MVP is designed to be:
-- Public and easy to share
-- Fun and visually engaging
-- Educational without requiring a login or backend account system
-- Desktop-first for the first release
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## MVP Features
-- Single-screen game experience
-- Four bins: general waste, paper, plastic, and organic waste
-- 60-second game round
-- Drag-and-drop waste sorting
-- Score tracking for the current session only
-- Wrong-drop failure feedback with score reset
-- Short teaching messages shown the first time an item is sorted correctly
+## React Compiler
 
-## Product Rules
-- No login is required.
-- Anyone with the link can play.
-- Refreshing or reopening the site resets the score.
-- Wrong answers do not reveal the correct bin in the MVP.
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Design Direction
-The site uses a comic-style visual direction with:
-- Soft green Earth-inspired backgrounds
-- Clear, colorful recycling bins
-- Playful motion and feedback
-- A numeric timer plus a visible countdown bar
+## Expanding the ESLint configuration
 
-## Documentation
-Project planning documents live in the [docs](./docs) folder.
-
-Key files:
-- [docs/project-brief.md](./docs/project-brief.md)
-- [docs/gameplay-content-spec.md](./docs/gameplay-content-spec.md)
-- [docs/design-brief.md](./docs/design-brief.md)
-- [docs/ui-spec.md](./docs/ui-spec.md)
-- [docs/next-steps.md](./docs/next-steps.md)
-- [docs/open-questions.md](./docs/open-questions.md)
-
-## Current Status
-Planning and design definition are complete enough to begin implementation.
-
-The next recommended step is to choose the frontend stack and scaffold the first playable prototype.
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
