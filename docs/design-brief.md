@@ -118,6 +118,50 @@ Recommended style:
 - Keep animation duration short and avoid constant aggressive flashing.
 - Consider a reduced-motion option later, even if not in the MVP.
 
+---
+
+## Implemented Design: Glassmorphic Green Theme
+
+> This section records the visual direction actually built for the MVP, superseding the "bright eco-arcade" suggestion above.
+
+### Visual Direction
+The implemented design uses a **glassmorphic green** aesthetic — deep emerald backgrounds with frosted-glass UI surfaces, soft glows, and translucent layering. The feeling is modern, premium, and eco-aware rather than cartoon-arcade.
+
+### Background
+- Base colour: deep forest green (`#052e16`)
+- Five layered radial gradient orbs in dark-to-mid greens create depth without a flat look
+- No sky/ground split — the whole viewport is a continuous deep green environment
+
+### Glass Surface System
+All UI panels use a consistent frosted-glass treatment:
+- `background: rgba(255, 255, 255, 0.10–0.16)` — low-opacity white fill
+- `backdrop-filter: blur(18px)` — the blur that creates the frosted effect
+- `border: 1px solid rgba(255, 255, 255, 0.22)` — subtle white edge highlight
+- `box-shadow` with deep RGBA values for lift and depth
+- Inner top highlight (`inset 0 1px 0 rgba(255,255,255,0.15)`) for glass depth
+
+### Color Palette
+| Token | Value | Usage |
+| --- | --- | --- |
+| `--accent` | `#4ade80` | Score, title glow, hover highlights |
+| `--accent-dim` | `#16a34a` | Timer bar gradient start |
+| `--timer-color` | `#fbbf24` | Timer text and bar |
+| `--timer-warn` | `#f87171` | Last 10 seconds |
+| `--bin-general` | `rgba(100,116,139,0.55)` | Slate glass bin |
+| `--bin-paper` | `rgba(59,130,246,0.55)` | Blue glass bin |
+| `--bin-plastic` | `rgba(234,179,8,0.55)` | Amber glass bin |
+| `--bin-organic` | `rgba(34,197,94,0.55)` | Green glass bin |
+| `--text-light` | `#ffffff` | All primary text |
+| `--text-muted` | `rgba(255,255,255,0.65)` | Secondary labels |
+
+### Component Notes
+- **HUD** — frosted glass bar, green glowing title, amber timer bar with gradient fill
+- **Waste items** — glass cards with emoji drop shadow; bright border + green ambient glow on hover
+- **Bins** — semi-transparent coloured glass panels; on drag-over, a green outer glow replaces the default shadow
+- **Round-over panel** — glass card floated over playfield, glass pill replay button with green glow
+- **Teaching toast** — frosted green pill at bottom-center, fades in then out over 2.8 s
+- **Wrong-drop overlay** — red tint as before; the sad smiley content now sits inside a glass card for visual consistency
+
 ## MVP Design Priorities
 1. Clear bin differentiation.
 2. Readable playfield.

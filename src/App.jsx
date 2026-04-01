@@ -6,8 +6,38 @@ const ROUND_SECONDS = 60
 const SPAWN_INTERVAL = 2000
 const MAX_ACTIVE = 5
 
-function pickRandom() {
-  return WASTE_ITEMS[Math.floor(Math.random() * WASTE_ITEMS.length)]
+// Items that appear more frequently (recognisable household examples)
+const COMMON_ITEM_IDS = new Set([
+  'water-bottle', 'banana-peel', 'newspaper', 'greasy-pizza-box',
+  'shampoo-bottle', 'apple-core', 'cardboard-box', 'used-tissue',
+])
+
+// Pick the next item to spawn with variety safeguards:
+//  1. Never repeat the exact last spawned item ID
+//  2. Halve weight for items whose bin is currently the most crowded on screen
+//  3. Double weight for recognisable common items
+function pickNextItem(activeItems, lastSpawnedId) {
+  const binCount = { general: 0, paper: 0, plastic: 0, organic: 0 }
+  for (const item of activeItems) binCount[item.bin]++
+  const maxOnScreen = Math.max(...Object.values(binCount))
+
+  const pool = []
+  for (const item of WASTE_ITEMS) {
+    if (item.id === lastSpawnedId) continue // hard block on immediate repeat
+    let weight = COMMON_ITEM_IDS.has(item.id) ? 2 : 1
+    // Reduce weight when this bin already dominates the screen
+    if (maxOnScreen > 0 && binCount[item.bin] === maxOnScreen) {
+      weight = Math.ceil(weight / 2)
+    }
+    for (let i = 0; i < weight; i++) pool.push(item)
+  }
+
+  // Fallback: if every item was the last spawned (only 1 item in pool somehow)
+  if (pool.length === 0) {
+    const fallback = WASTE_ITEMS.filter((i) => i.id !== lastSpawnedId)
+    return fallback[Math.floor(Math.random() * fallback.length)]
+  }
+  return pool[Math.floor(Math.random() * pool.length)]
 }
 
 function randomPosition() {
@@ -27,7 +57,12 @@ function App() {
   const [draggedItem, setDraggedItem] = useState(null)
   const [highlightedBin, setHighlightedBin] = useState(null)
   const [showFlash, setShowFlash] = useState(false)
+  const [teachingMsg, setTeachingMsg] = useState(null)
+  const [lang, setLang] = useState('en')
   const flashTimer = useRef(null)
+  const teachingTimer = useRef(null)
+  const lastSpawnedIdRef = useRef(null)
+  const seenItemIdsRef = useRef(new Set())
 
   // Countdown timer
   useEffect(() => {
@@ -55,7 +90,8 @@ function App() {
     const spawn = () => {
       setActiveItems((prev) => {
         if (prev.length >= MAX_ACTIVE) return prev
-        const item = pickRandom()
+        const item = pickNextItem(prev, lastSpawnedIdRef.current)
+        lastSpawnedIdRef.current = item.id
         const pos = randomPosition()
         return [...prev, { ...item, spawnId: nextSpawnId++, pos }]
       })
@@ -86,12 +122,25 @@ function App() {
     flashTimer.current = setTimeout(() => setShowFlash(false), 1200)
   }, [])
 
+  const triggerTeaching = useCallback((item) => {
+    if (!item.teachingMessage) return
+    if (seenItemIdsRef.current.has(item.id)) return
+    seenItemIdsRef.current.add(item.id)
+    if (teachingTimer.current) clearTimeout(teachingTimer.current)
+    setTeachingMsg({ en: item.teachingMessage, de: item.teachingMessageDe || item.teachingMessage })
+    teachingTimer.current = setTimeout(() => setTeachingMsg(null), 2800)
+  }, [])
+
   const handleRestart = useCallback(() => {
     setTimeLeft(ROUND_SECONDS)
     setScore(0)
     setActiveItems([])
     setShowFlash(false)
     if (flashTimer.current) clearTimeout(flashTimer.current)
+    if (teachingTimer.current) clearTimeout(teachingTimer.current)
+    setTeachingMsg(null)
+    seenItemIdsRef.current = new Set()
+    lastSpawnedIdRef.current = null
     setRunning(true)
     nextSpawnId = 0
   }, [])
@@ -128,16 +177,25 @@ function App() {
 
     if (isCorrect) {
       incrementScore()
+      triggerTeaching(draggedItem)
     } else {
       resetScore()
       triggerFlash()
     }
 
     setDraggedItem(null)
-  }, [draggedItem, removeItem, incrementScore, resetScore, triggerFlash])
+  }, [draggedItem, removeItem, incrementScore, resetScore, triggerFlash, triggerTeaching])
 
   return (
     <div className="game-screen">
+      {/* First-time teaching message toast */}
+      {teachingMsg && (
+        <div className="teaching-toast" key={teachingMsg.en}>
+          <span className="teaching-toast__icon">💡</span>
+          <span className="teaching-toast__text">{lang === 'en' ? teachingMsg.en : teachingMsg.de}</span>
+        </div>
+      )}
+
       {/* Wrong-drop flash overlay */}
       {showFlash && (
         <div className="flash-overlay">
@@ -153,7 +211,7 @@ function App() {
         <h1 className="hud__title">♻️ Recycle Rush</h1>
         <div className="hud__stats">
           <div className="hud__score">
-            Score: <span className="hud__score-value">{score}</span>
+            {lang === 'en' ? 'Score' : 'Punkte'}: <span className="hud__score-value">{score}</span>
           </div>
           <div className="hud__timer">
             <span className={`hud__timer-value${timerWarn ? ' hud__timer-value--warn' : ''}`}>
@@ -166,6 +224,16 @@ function App() {
               />
             </div>
           </div>
+          <div className="hud__lang">
+            <button
+              className={`lang-btn${lang === 'en' ? ' lang-btn--active' : ''}`}
+              onClick={() => setLang('en')}
+            >EN</button>
+            <button
+              className={`lang-btn${lang === 'de' ? ' lang-btn--active' : ''}`}
+              onClick={() => setLang('de')}
+            >DE</button>
+          </div>
         </div>
       </header>
 
@@ -175,7 +243,9 @@ function App() {
           <>
             {activeItems.length === 0 && (
               <p className="playfield__hint">
-                Drag each item into the right bin before time runs out!
+                {lang === 'en'
+                  ? 'Drag each item into the right bin before time runs out!'
+                  : 'Ziehe jeden Gegenstand in den richtigen Behälter, bevor die Zeit abläuft!'}
               </p>
             )}
             {activeItems.map((item) => (
@@ -191,16 +261,16 @@ function App() {
                 }}
               >
                 <span className="waste-item__emoji">{item.emoji}</span>
-                <span className="waste-item__label">{item.label}</span>
+                <span className="waste-item__label">{lang === 'en' ? item.label : item.labelDe}</span>
               </div>
             ))}
           </>
         ) : (
           <div className="round-over">
-            <h2 className="round-over__title">⏰ Time's up!</h2>
-            <p className="round-over__score">Final score: {score}</p>
+            <h2 className="round-over__title">{lang === 'en' ? "⏰ Time's up!" : '⏰ Zeit abgelaufen!'}</h2>
+            <p className="round-over__score">{lang === 'en' ? 'Final score' : 'Endpunktzahl'}: {score}</p>
             <button className="round-over__btn" onClick={handleRestart}>
-              Play again
+              {lang === 'en' ? 'Play again' : 'Nochmal spielen'}
             </button>
           </div>
         )}
@@ -215,7 +285,7 @@ function App() {
           onDrop={(e) => handleBinDrop(e, 'general')}
         >
           <span className="bin__icon">🗑️</span>
-          <span className="bin__label">General</span>
+          <span className="bin__label">{lang === 'en' ? 'General' : 'Restmüll'}</span>
         </div>
         <div
           className={`bin bin--paper${highlightedBin === 'paper' ? ' bin--highlight' : ''}`}
@@ -224,7 +294,7 @@ function App() {
           onDrop={(e) => handleBinDrop(e, 'paper')}
         >
           <span className="bin__icon">📄</span>
-          <span className="bin__label">Paper</span>
+          <span className="bin__label">{lang === 'en' ? 'Paper' : 'Papier'}</span>
         </div>
         <div
           className={`bin bin--plastic${highlightedBin === 'plastic' ? ' bin--highlight' : ''}`}
@@ -233,7 +303,7 @@ function App() {
           onDrop={(e) => handleBinDrop(e, 'plastic')}
         >
           <span className="bin__icon">🧴</span>
-          <span className="bin__label">Plastic</span>
+          <span className="bin__label">{lang === 'en' ? 'Plastic' : 'Kunststoff'}</span>
         </div>
         <div
           className={`bin bin--organic${highlightedBin === 'organic' ? ' bin--highlight' : ''}`}
@@ -242,7 +312,7 @@ function App() {
           onDrop={(e) => handleBinDrop(e, 'organic')}
         >
           <span className="bin__icon">🌿</span>
-          <span className="bin__label">Organic</span>
+          <span className="bin__label">{lang === 'en' ? 'Organic' : 'Biomüll'}</span>
         </div>
       </footer>
     </div>
