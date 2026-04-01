@@ -1,5 +1,8 @@
 # Open Questions
 
+## Security Rules (non-negotiable)
+- **Never commit API keys, tokens, passwords, or secrets to GitHub.** Use `.env` files for any future credentials and ensure they are listed in `.gitignore`. Only a `.env.example` (with placeholder values) may be committed.
+
 ## Design
 - Should sound effects be included?
 - Should animation intensity be adjustable for accessibility?
