@@ -24,5 +24,5 @@ _(No open content questions remaining.)_
 - The timer continues running uninterrupted during failure feedback — it does not pause.
 - The stack is React (Vite) with a single-screen static frontend.
 - 12 recognisable household items have 2× spawn weight to keep play intuitive; all others spawn at 1×.
-- Bin labels are English-only for the first version.
+- Bin labels and waste item cards are fully bilingual (EN + DE). Item cards always show both languages simultaneously.
 - Sound effects and reduced-motion toggle are deferred to post-MVP (T20, T21).

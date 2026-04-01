@@ -33,10 +33,10 @@ This checklist translates the approved MVP requirements into actionable build ta
 | T13 | P1 | Build modern HUD visuals and timer bar | Unassigned | Done | T02, T03, T04 | HUD shows title, score, numeric timer, and visible countdown bar. |
 | T14 | P1 | Style four bins with strong visual identity | Unassigned | Done | T02 | Bins are clearly distinguishable by color, icon, and label. |
 | T15 | P1 | Implement modern space-navy glassmorphic background | Unassigned | Done | T02 | Background is deep navy-teal with atmospheric orbs and does not reduce gameplay readability. |
-| T16 | P1 | Add interaction animations | Unassigned | In Progress | T05, T07, T08 | Hover, drag, correct-drop, and wrong-drop animations are short and readable. |
-| T17 | P1 | Add start instruction prompt | Unassigned | In Progress | T02 | Brief instruction appears at round start and fades out quickly. |
+| T16 | P1 | Add interaction animations | Unassigned | Done | T05, T07, T08 | Hover, drag, correct-drop, and wrong-drop animations are short and readable. |
+| T17 | P1 | Add start instruction prompt | Unassigned | Done | T02 | Brief instruction appears at round start and fades out quickly. |
 | T18 | P1 | Validate desktop-first usability | Unassigned | Done | T02, T05, T14 | Drag targets, spacing, and UI remain comfortable on desktop resolutions. |
-| T19 | P1 | QA pass against MVP rules | Unassigned | Not Started | T01-T18 | Behavior matches project brief and content spec with no critical rule mismatch. |
+| T19 | P1 | QA pass against MVP rules | Unassigned | Done | T01-T18 | Behavior matches project brief and content spec with no critical rule mismatch. |
 | T20 | P2 | Add optional sound effects toggle | Unassigned | Not Started | T08, T16 | Sound can be enabled or disabled and does not block gameplay when off. |
 | T21 | P2 | Add reduced-motion toggle placeholder | Unassigned | Not Started | T16 | Major animation intensity can be reduced for accessibility testing. |
 | T22 | P2 | Add lightweight round summary panel | Unassigned | Done | T09 | End-of-round panel shows score and quick restart without clutter. |

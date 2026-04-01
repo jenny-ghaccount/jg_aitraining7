@@ -216,7 +216,9 @@ function App() {
         <div className="flash-overlay">
           <div className="flash-overlay__content">
             <span className="flash-overlay__smiley">😢</span>
-            <span className="flash-overlay__text">That was wrong!</span>
+            <span className="flash-overlay__text">
+              {lang === 'en' ? 'That was wrong!' : 'Das war falsch!'}
+            </span>
           </div>
         </div>
       )}
@@ -279,7 +281,8 @@ function App() {
                 }}
               >
                 <span className="waste-item__emoji">{item.emoji}</span>
-                <span className="waste-item__label">{lang === 'en' ? item.label : item.labelDe}</span>
+                <span className="waste-item__label">{item.label}</span>
+                <span className="waste-item__label-de">{item.labelDe}</span>
               </div>
             ))}
           </>
