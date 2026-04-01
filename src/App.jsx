@@ -54,13 +54,16 @@ function App() {
   const [running, setRunning] = useState(true)
   const [score, setScore] = useState(0)
   const [activeItems, setActiveItems] = useState([])
+  const [poppingItems, setPoppingItems] = useState(new Set())
   const [draggedItem, setDraggedItem] = useState(null)
   const [highlightedBin, setHighlightedBin] = useState(null)
   const [showFlash, setShowFlash] = useState(false)
   const [teachingMsg, setTeachingMsg] = useState(null)
   const [lang, setLang] = useState('en')
+  const [showHint, setShowHint] = useState(true)
   const flashTimer = useRef(null)
   const teachingTimer = useRef(null)
+  const hintTimer = useRef(null)
   const lastSpawnedIdRef = useRef(null)
   const seenItemIdsRef = useRef(new Set())
 
@@ -87,6 +90,9 @@ function App() {
   // Spawn items periodically
   useEffect(() => {
     if (!running) return
+    // Auto-dismiss hint after 2.5 s
+    if (hintTimer.current) clearTimeout(hintTimer.current)
+    hintTimer.current = setTimeout(() => setShowHint(false), 2500)
     const spawn = () => {
       setActiveItems((prev) => {
         if (prev.length >= MAX_ACTIVE) return prev
@@ -106,7 +112,13 @@ function App() {
 
   const removeItem = useCallback((spawnId) => {
     setActiveItems((prev) => prev.filter((i) => i.spawnId !== spawnId))
+    setPoppingItems((prev) => { const n = new Set(prev); n.delete(spawnId); return n })
   }, [])
+
+  const popThenRemove = useCallback((spawnId) => {
+    setPoppingItems((prev) => new Set(prev).add(spawnId))
+    setTimeout(() => removeItem(spawnId), 350)
+  }, [removeItem])
 
   const incrementScore = useCallback(() => {
     setScore((s) => s + 1)
@@ -135,10 +147,13 @@ function App() {
     setTimeLeft(ROUND_SECONDS)
     setScore(0)
     setActiveItems([])
+    setPoppingItems(new Set())
     setShowFlash(false)
     if (flashTimer.current) clearTimeout(flashTimer.current)
     if (teachingTimer.current) clearTimeout(teachingTimer.current)
+    if (hintTimer.current) clearTimeout(hintTimer.current)
     setTeachingMsg(null)
+    setShowHint(true)
     seenItemIdsRef.current = new Set()
     lastSpawnedIdRef.current = null
     setRunning(true)
@@ -173,18 +188,18 @@ function App() {
     if (!draggedItem) return
 
     const isCorrect = draggedItem.bin === binType
-    removeItem(draggedItem.spawnId)
-
     if (isCorrect) {
+      popThenRemove(draggedItem.spawnId)
       incrementScore()
       triggerTeaching(draggedItem)
     } else {
+      removeItem(draggedItem.spawnId)
       resetScore()
       triggerFlash()
     }
 
     setDraggedItem(null)
-  }, [draggedItem, removeItem, incrementScore, resetScore, triggerFlash, triggerTeaching])
+  }, [draggedItem, removeItem, popThenRemove, incrementScore, resetScore, triggerFlash, triggerTeaching])
 
   return (
     <div className="game-screen">
@@ -241,8 +256,11 @@ function App() {
       <main className="playfield">
         {running ? (
           <>
-            {activeItems.length === 0 && (
-              <p className="playfield__hint">
+            {showHint && (
+              <p
+                className="playfield__hint"
+                onAnimationEnd={() => setShowHint(false)}
+              >
                 {lang === 'en'
                   ? 'Drag each item into the right bin before time runs out!'
                   : 'Ziehe jeden Gegenstand in den richtigen Behälter, bevor die Zeit abläuft!'}
@@ -251,7 +269,7 @@ function App() {
             {activeItems.map((item) => (
               <div
                 key={item.spawnId}
-                className="waste-item"
+                className={`waste-item${poppingItems.has(item.spawnId) ? ' waste-item--pop' : ''}`}
                 draggable
                 onDragStart={(e) => handleDragStart(e, item)}
                 onDragEnd={handleDragEnd}
