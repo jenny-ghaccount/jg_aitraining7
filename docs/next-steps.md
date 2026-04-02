@@ -13,6 +13,7 @@ All P0 tasks and most P1 tasks are complete. The game is fully playable with a w
 - **T19 (P1)** — QA pass against MVP rules. Verify all behavior matches the project brief and content spec. Recommended before any demo.
 - **T20 (P2)** — Optional sound effects toggle (deferred post-MVP).
 - **T21 (P2)** — Reduced-motion toggle placeholder (deferred post-MVP).
+- **T23 (P1)** — Start button and pre-round countdown. After page load show a start screen with a prominent Start button. On click, display a 3 → 2 → 1 animated countdown overlay before the round begins. Items must not spawn and the timer must not run until the countdown finishes. (Feedback item — not yet implemented.)
 
 ## Recommended Next Actions
 1. Complete T16 — add a brief correct-drop animation (quick scale-and-fade on the waste item).
