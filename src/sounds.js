@@ -20,16 +20,32 @@ function getCtx() {
 }
 
 /**
- * Keep the AudioContext alive by resuming it on every pointerdown.
- * Using a persistent listener (not once:true) means any period of
- * browser-initiated suspension is cleared before the next drag begins,
- * so audio is always ready to schedule instantly when the drop fires.
- * pointerdown IS a trusted activation event; dragstart/drop are NOT.
+ * Start a silent 1-sample buffer looping forever.
+ * This keeps the audio thread alive so the context never auto-suspends
+ * and ac.currentTime always advances — giving zero-latency scheduling.
+ */
+function startKeepalive(ac) {
+  const buf = ac.createBuffer(1, 1, ac.sampleRate)
+  function loop() {
+    const src = ac.createBufferSource()
+    src.buffer = buf
+    src.connect(ac.destination)
+    src.onended = loop
+    src.start()
+  }
+  loop()
+}
+
+/**
+ * On first pointerdown: create the context, resume it, and start the
+ * keepalive loop. After this the context is permanently running.
  */
 window.addEventListener('pointerdown', () => {
   const ac = getCtx()
-  if (ac.state === 'suspended') ac.resume()
-}, { capture: true })
+  if (ac.state !== 'running') {
+    ac.resume().then(() => startKeepalive(ac))
+  }
+}, { once: true, capture: true })
 
 /** Single oscillator tone with exponential decay. Synchronous schedule. */
 function playTone(freq, type, startOffset, duration, gainVal = 0.25) {
@@ -94,24 +110,24 @@ function playMetal() {
   const g1 = ac.createGain()
   osc1.type = 'sine'
   osc1.frequency.setValueAtTime(1600, ac.currentTime)
-  osc1.frequency.exponentialRampToValueAtTime(900, ac.currentTime + 0.5)
+  osc1.frequency.exponentialRampToValueAtTime(900, ac.currentTime + 0.22)
   g1.gain.setValueAtTime(0.22, ac.currentTime)
-  g1.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.55)
+  g1.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.25)
   osc1.connect(g1)
   g1.connect(ac.destination)
   osc1.start(ac.currentTime)
-  osc1.stop(ac.currentTime + 0.58)
+  osc1.stop(ac.currentTime + 0.27)
   const osc2 = ac.createOscillator()
   const g2 = ac.createGain()
   osc2.type = 'sine'
   osc2.frequency.setValueAtTime(2300, ac.currentTime)
-  osc2.frequency.exponentialRampToValueAtTime(1400, ac.currentTime + 0.3)
+  osc2.frequency.exponentialRampToValueAtTime(1400, ac.currentTime + 0.14)
   g2.gain.setValueAtTime(0.10, ac.currentTime)
-  g2.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.3)
+  g2.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.16)
   osc2.connect(g2)
   g2.connect(ac.destination)
   osc2.start(ac.currentTime)
-  osc2.stop(ac.currentTime + 0.33)
+  osc2.stop(ac.currentTime + 0.18)
 }
 
 /** organic — low-sine soft plop (ripe fruit dropped) */
@@ -149,8 +165,8 @@ function playCeramic() {
 
 /** mixed / general — two-tone ascending chime */
 function playMixed() {
-  playTone(659.25, 'sine', 0,    0.13, 0.25)
-  playTone(880.00, 'sine', 0.11, 0.20, 0.25)
+  playTone(659.25, 'sine', 0,    0.10, 0.25)
+  playTone(880.00, 'sine', 0.08, 0.12, 0.25)
 }
 
 // ── Public API ───────────────────────────────────────────────────────────────
@@ -177,13 +193,13 @@ export function playWrong() {
   const gain = ac.createGain()
   osc.type = 'sawtooth'
   osc.frequency.setValueAtTime(220, ac.currentTime)
-  osc.frequency.exponentialRampToValueAtTime(80, ac.currentTime + 0.4)
+  osc.frequency.exponentialRampToValueAtTime(80, ac.currentTime + 0.18)
   gain.gain.setValueAtTime(0.28, ac.currentTime)
-  gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.4)
+  gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.20)
   osc.connect(gain)
   gain.connect(ac.destination)
   osc.start(ac.currentTime)
-  osc.stop(ac.currentTime + 0.45)
+  osc.stop(ac.currentTime + 0.22)
 }
 
 /** Short square blip — timer warning tick (≤10 s). */

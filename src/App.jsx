@@ -4,7 +4,7 @@ import WASTE_ITEMS from './wasteItems'
 import { playMaterial, playWrong, playTick, playCountdownTick, playCountdownGo } from './sounds'
 
 const ROUND_SECONDS = 60
-const SPAWN_INTERVAL = 2000
+const SPAWN_INTERVAL = 1400
 const MAX_ACTIVE = 5
 
 // Items that appear more frequently (recognisable household examples)
