@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import './App.css'
 import WASTE_ITEMS from './wasteItems'
+import { playCorrect, playWrong, playTick } from './sounds'
 
 const ROUND_SECONDS = 60
 const SPAWN_INTERVAL = 2000
@@ -61,6 +62,7 @@ function App() {
   const [teachingMsg, setTeachingMsg] = useState(null)
   const [lang, setLang] = useState('en')
   const [showHint, setShowHint] = useState(true)
+  const [soundOn, setSoundOn] = useState(true)
   const flashTimer = useRef(null)
   const teachingTimer = useRef(null)
   const hintTimer = useRef(null)
@@ -86,6 +88,13 @@ function App() {
     }, 1000)
     return () => clearInterval(id)
   }, [running, timeLeft <= 0])
+
+  // Timer-warning tick — fires each second when ≤10 s remain
+  useEffect(() => {
+    if (soundOn && running && timeLeft <= 10 && timeLeft > 0) {
+      playTick()
+    }
+  }, [timeLeft, soundOn, running])
 
   // Spawn items periodically
   useEffect(() => {
@@ -189,17 +198,19 @@ function App() {
 
     const isCorrect = draggedItem.bin === binType
     if (isCorrect) {
+      if (soundOn) playCorrect()
       popThenRemove(draggedItem.spawnId)
       incrementScore()
       triggerTeaching(draggedItem)
     } else {
+      if (soundOn) playWrong()
       removeItem(draggedItem.spawnId)
       resetScore()
       triggerFlash()
     }
 
     setDraggedItem(null)
-  }, [draggedItem, removeItem, popThenRemove, incrementScore, resetScore, triggerFlash, triggerTeaching])
+  }, [draggedItem, soundOn, removeItem, popThenRemove, incrementScore, resetScore, triggerFlash, triggerTeaching])
 
   return (
     <div className="game-screen">
@@ -250,6 +261,14 @@ function App() {
               className={`lang-btn${lang === 'de' ? ' lang-btn--active' : ''}`}
               onClick={() => setLang('de')}
             >DE</button>
+          </div>
+          <div className="hud__sound">
+            <button
+              className={`sound-btn${soundOn ? ' sound-btn--on' : ''}`}
+              onClick={() => setSoundOn((v) => !v)}
+              aria-label={soundOn ? 'Mute sounds' : 'Unmute sounds'}
+              title={soundOn ? 'Mute sounds' : 'Unmute sounds'}
+            >{soundOn ? '🔊' : '🔇'}</button>
           </div>
         </div>
       </header>
