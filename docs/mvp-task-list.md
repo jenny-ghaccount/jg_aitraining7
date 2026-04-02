@@ -40,6 +40,7 @@ This checklist translates the approved MVP requirements into actionable build ta
 | T20 | P2 | Add optional sound effects toggle | Unassigned | Not Started | T08, T16 | Sound can be enabled or disabled and does not block gameplay when off. |
 | T21 | P2 | Add reduced-motion toggle placeholder | Unassigned | Not Started | T16 | Major animation intensity can be reduced for accessibility testing. |
 | T22 | P2 | Add lightweight round summary panel | Unassigned | Done | T09 | End-of-round panel shows score and quick restart without clutter. |
+| T23 | P1 | Add start button and pre-round countdown | Unassigned | Not Started | T02, T03 | After page load a start screen is shown with a prominent Start button. On click, a full-screen or overlay countdown animates 3 → 2 → 1 with clear visuals before the round timer begins. Items do not spawn and the timer does not run until the countdown completes. |
 
 ## Suggested Build Phases
 
