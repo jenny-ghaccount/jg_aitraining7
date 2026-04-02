@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import './App.css'
 import WASTE_ITEMS from './wasteItems'
-import { playCorrect, playWrong, playTick } from './sounds'
+import { playMaterial, playWrong, playTick } from './sounds'
 
 const ROUND_SECONDS = 60
 const SPAWN_INTERVAL = 2000
@@ -198,7 +198,7 @@ function App() {
 
     const isCorrect = draggedItem.bin === binType
     if (isCorrect) {
-      if (soundOn) playCorrect()
+      if (soundOn) playMaterial(draggedItem.material)
       popThenRemove(draggedItem.spawnId)
       incrementScore()
       triggerTeaching(draggedItem)
