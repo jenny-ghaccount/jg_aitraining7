@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import './App.css'
 import WASTE_ITEMS from './wasteItems'
-import { playMaterial, playWrong, playTick } from './sounds'
+import { playMaterial, playWrong, playTick, playCountdownTick, playCountdownGo } from './sounds'
 
 const ROUND_SECONDS = 60
 const SPAWN_INTERVAL = 2000
@@ -51,8 +51,9 @@ function randomPosition() {
 let nextSpawnId = 0
 
 function App() {
+  const [phase, setPhase] = useState('start') // 'start' | 'countdown' | 'playing' | 'ended'
+  const [countdownVal, setCountdownVal] = useState(null)
   const [timeLeft, setTimeLeft] = useState(ROUND_SECONDS)
-  const [running, setRunning] = useState(true)
   const [score, setScore] = useState(0)
   const [activeItems, setActiveItems] = useState([])
   const [poppingItems, setPoppingItems] = useState(new Set())
@@ -69,36 +70,36 @@ function App() {
   const lastSpawnedIdRef = useRef(null)
   const seenItemIdsRef = useRef(new Set())
 
-  // Countdown timer
+  // Round timer
   useEffect(() => {
-    if (!running) return
+    if (phase !== 'playing') return
     if (timeLeft <= 0) {
-      setRunning(false)
+      setPhase('ended')
       return
     }
     const id = setInterval(() => {
       setTimeLeft((t) => {
         if (t <= 1) {
           clearInterval(id)
-          setRunning(false)
+          setPhase('ended')
           return 0
         }
         return t - 1
       })
     }, 1000)
     return () => clearInterval(id)
-  }, [running, timeLeft <= 0])
+  }, [phase, timeLeft <= 0])
 
   // Timer-warning tick — fires each second when ≤10 s remain
   useEffect(() => {
-    if (soundOn && running && timeLeft <= 10 && timeLeft > 0) {
+    if (soundOn && phase === 'playing' && timeLeft <= 10 && timeLeft > 0) {
       playTick()
     }
-  }, [timeLeft, soundOn, running])
+  }, [timeLeft, soundOn, phase])
 
   // Spawn items periodically
   useEffect(() => {
-    if (!running) return
+    if (phase !== 'playing') return
     // Auto-dismiss hint after 2.5 s
     if (hintTimer.current) clearTimeout(hintTimer.current)
     hintTimer.current = setTimeout(() => setShowHint(false), 2500)
@@ -114,7 +115,24 @@ function App() {
     spawn() // spawn one immediately
     const id = setInterval(spawn, SPAWN_INTERVAL)
     return () => clearInterval(id)
-  }, [running])
+  }, [phase])
+
+  // Pre-round countdown: 3 → 2 → 1 → GO → playing
+  const soundOnRef = useRef(soundOn)
+  useEffect(() => { soundOnRef.current = soundOn }, [soundOn])
+
+  useEffect(() => {
+    if (phase !== 'countdown') return
+    setCountdownVal(3)
+    if (soundOnRef.current) playCountdownTick()
+
+    const t1 = setTimeout(() => { setCountdownVal(2); if (soundOnRef.current) playCountdownTick() }, 1000)
+    const t2 = setTimeout(() => { setCountdownVal(1); if (soundOnRef.current) playCountdownTick() }, 2000)
+    const t3 = setTimeout(() => { setCountdownVal(0); if (soundOnRef.current) playCountdownGo() }, 3000)
+    const t4 = setTimeout(() => { setPhase('playing'); setCountdownVal(null) }, 3700)
+
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4) }
+  }, [phase])
 
   const timerPercent = (timeLeft / ROUND_SECONDS) * 100
   const timerWarn = timeLeft <= 10
@@ -165,7 +183,7 @@ function App() {
     setShowHint(true)
     seenItemIdsRef.current = new Set()
     lastSpawnedIdRef.current = null
-    setRunning(true)
+    setPhase('playing')
     nextSpawnId = 0
   }, [])
 
@@ -275,7 +293,7 @@ function App() {
 
       {/* Playfield */}
       <main className="playfield">
-        {running ? (
+        {phase === 'playing' && (
           <>
             {showHint && (
               <p
@@ -305,7 +323,8 @@ function App() {
               </div>
             ))}
           </>
-        ) : (
+        )}
+        {phase === 'ended' && (
           <div className="round-over">
             <h2 className="round-over__title">{lang === 'en' ? "⏰ Time's up!" : '⏰ Zeit abgelaufen!'}</h2>
             <p className="round-over__score">{lang === 'en' ? 'Final score' : 'Endpunktzahl'}: {score}</p>
@@ -355,6 +374,38 @@ function App() {
           <span className="bin__label">{lang === 'en' ? 'Organic' : 'Biomüll'}</span>
         </div>
       </footer>
+
+      {/* Start screen overlay */}
+      {phase === 'start' && (
+        <div className="start-overlay">
+          <div className="start-overlay__card">
+            <h2 className="start-overlay__title">♻️ Recycle Rush</h2>
+            <ul className="start-overlay__rules">
+              <li>{lang === 'en' ? 'Sort each waste item into the correct bin' : 'Sortiere jeden Gegenstand in den richtigen Behälter'}</li>
+              <li>{lang === 'en' ? 'Correct drop → +1 point' : 'Richtig sortiert → +1 Punkt'}</li>
+              <li>{lang === 'en' ? 'Wrong drop → score resets to 0' : 'Falsch sortiert → Punktestand auf 0 zurückgesetzt'}</li>
+            </ul>
+            <button
+              className="start-overlay__btn"
+              onClick={() => setPhase('countdown')}
+            >
+              {lang === 'en' ? '▶️ Start' : '▶️ Starten'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Pre-round countdown overlay */}
+      {phase === 'countdown' && (
+        <div className="countdown-overlay">
+          <div
+            key={countdownVal}
+            className={countdownVal === 0 ? 'countdown-overlay__go' : 'countdown-overlay__number'}
+          >
+            {countdownVal === 0 ? (lang === 'en' ? 'GO!' : 'LOS!') : countdownVal}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -12,32 +12,28 @@
 
 let ctx = null
 
-async function getCtx() {
+function getCtx() {
   if (!ctx) {
     ctx = new (window.AudioContext || window.webkitAudioContext)()
-  }
-  if (ctx.state === 'suspended') {
-    await ctx.resume()
   }
   return ctx
 }
 
 /**
- * Pre-unlock the AudioContext on the very first pointerdown.
+ * Keep the AudioContext alive by resuming it on every pointerdown.
+ * Using a persistent listener (not once:true) means any period of
+ * browser-initiated suspension is cleared before the next drag begins,
+ * so audio is always ready to schedule instantly when the drop fires.
  * pointerdown IS a trusted activation event; dragstart/drop are NOT.
- * This ensures the context is running before any drop handler fires.
  */
-function installUnlockListener() {
-  const unlock = async () => {
-    await getCtx()
-  }
-  window.addEventListener('pointerdown', unlock, { once: true, capture: true })
-}
-installUnlockListener()
+window.addEventListener('pointerdown', () => {
+  const ac = getCtx()
+  if (ac.state === 'suspended') ac.resume()
+}, { capture: true })
 
-/** Single oscillator tone with exponential decay. */
-async function playTone(freq, type, startOffset, duration, gainVal = 0.25) {
-  const ac = await getCtx()
+/** Single oscillator tone with exponential decay. Synchronous schedule. */
+function playTone(freq, type, startOffset, duration, gainVal = 0.25) {
+  const ac = getCtx()
   const osc = ac.createOscillator()
   const gain = ac.createGain()
   osc.type = type
@@ -53,8 +49,8 @@ async function playTone(freq, type, startOffset, duration, gainVal = 0.25) {
 // ── Material sounds ──────────────────────────────────────────────────────────
 
 /** paper — bandpass white noise burst (soft crinkle/rustle) */
-async function playPaper() {
-  const ac = await getCtx()
+function playPaper() {
+  const ac = getCtx()
   const bufferSize = Math.floor(ac.sampleRate * 0.13)
   const buffer = ac.createBuffer(1, bufferSize, ac.sampleRate)
   const data = buffer.getChannelData(0)
@@ -76,8 +72,8 @@ async function playPaper() {
 }
 
 /** plastic — hollow triangle knock (like tapping a plastic bottle) */
-async function playPlastic() {
-  const ac = await getCtx()
+function playPlastic() {
+  const ac = getCtx()
   const osc = ac.createOscillator()
   const gain = ac.createGain()
   osc.type = 'triangle'
@@ -92,9 +88,8 @@ async function playPlastic() {
 }
 
 /** metal — inharmonic sine ping with slow decay (coin drop / metallic ring) */
-async function playMetal() {
-  const ac = await getCtx()
-  // Primary ring
+function playMetal() {
+  const ac = getCtx()
   const osc1 = ac.createOscillator()
   const g1 = ac.createGain()
   osc1.type = 'sine'
@@ -106,7 +101,6 @@ async function playMetal() {
   g1.connect(ac.destination)
   osc1.start(ac.currentTime)
   osc1.stop(ac.currentTime + 0.58)
-  // Inharmonic partial — gives it a metallic character
   const osc2 = ac.createOscillator()
   const g2 = ac.createGain()
   osc2.type = 'sine'
@@ -121,8 +115,8 @@ async function playMetal() {
 }
 
 /** organic — low-sine soft plop (ripe fruit dropped) */
-async function playOrganic() {
-  const ac = await getCtx()
+function playOrganic() {
+  const ac = getCtx()
   const osc = ac.createOscillator()
   const gain = ac.createGain()
   osc.type = 'sine'
@@ -137,8 +131,8 @@ async function playOrganic() {
 }
 
 /** ceramic — crisp triangle tap with a short harmonic overlay */
-async function playCeramic() {
-  const ac = await getCtx()
+function playCeramic() {
+  const ac = getCtx()
   const osc = ac.createOscillator()
   const gain = ac.createGain()
   osc.type = 'triangle'
@@ -150,13 +144,12 @@ async function playCeramic() {
   gain.connect(ac.destination)
   osc.start(ac.currentTime)
   osc.stop(ac.currentTime + 0.11)
-  // crisp overtone
   playTone(1800, 'sine', 0.003, 0.05, 0.07)
 }
 
-/** mixed / general — two-tone ascending chime (generic pleasant correct sound) */
-async function playMixed() {
-  await playTone(659.25, 'sine', 0,    0.13, 0.25)
+/** mixed / general — two-tone ascending chime */
+function playMixed() {
+  playTone(659.25, 'sine', 0,    0.13, 0.25)
   playTone(880.00, 'sine', 0.11, 0.20, 0.25)
 }
 
@@ -178,8 +171,8 @@ export function playMaterial(material) {
 }
 
 /** Descending sawtooth buzz — wrong drop. */
-export async function playWrong() {
-  const ac = await getCtx()
+export function playWrong() {
+  const ac = getCtx()
   const osc = ac.createOscillator()
   const gain = ac.createGain()
   osc.type = 'sawtooth'
@@ -194,6 +187,18 @@ export async function playWrong() {
 }
 
 /** Short square blip — timer warning tick (≤10 s). */
-export async function playTick() {
+export function playTick() {
   playTone(660, 'square', 0, 0.05, 0.12)
+}
+
+/** Bright sine tick — each countdown number (3, 2, 1). */
+export function playCountdownTick() {
+  playTone(880, 'sine', 0, 0.10, 0.22)
+}
+
+/** Rising three-note chime — GO! */
+export function playCountdownGo() {
+  playTone(659.25,  'sine', 0,    0.12, 0.28)
+  playTone(880.00,  'sine', 0.10, 0.12, 0.28)
+  playTone(1174.66, 'sine', 0.20, 0.22, 0.28)
 }

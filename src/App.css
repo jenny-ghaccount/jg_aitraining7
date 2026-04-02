@@ -543,3 +543,122 @@
   color: white;
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
+
+/* === Start Screen Overlay === */
+.start-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(7, 21, 38, 0.82);
+  backdrop-filter: blur(6px);
+}
+
+.start-overlay__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 48px 56px;
+  background: var(--glass-bg-strong);
+  border: 1px solid var(--glass-border-vivid);
+  border-radius: 24px;
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: var(--glass-blur);
+  text-align: center;
+  max-width: 480px;
+}
+
+.start-overlay__title {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.01em;
+  margin: 0;
+}
+
+.start-overlay__rules {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0;
+  margin: 0;
+}
+
+.start-overlay__rules li {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--text-muted);
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  border: 1px solid var(--glass-border);
+}
+
+.start-overlay__btn {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 14px 48px;
+  border: none;
+  border-radius: 50px;
+  background: var(--accent);
+  color: #071526;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+  box-shadow: 0 0 24px rgba(52, 211, 153, 0.45);
+}
+
+.start-overlay__btn:hover {
+  background: #5eead4;
+  transform: scale(1.05);
+  box-shadow: 0 0 36px rgba(52, 211, 153, 0.65);
+}
+
+.start-overlay__btn:active {
+  transform: scale(0.97);
+}
+
+/* === Countdown Overlay === */
+.countdown-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(7, 21, 38, 0.78);
+  backdrop-filter: blur(4px);
+}
+
+.countdown-overlay__number {
+  font-family: var(--font-display);
+  font-size: 180px;
+  font-weight: 800;
+  color: var(--text-light);
+  text-shadow: 0 0 60px rgba(52, 211, 153, 0.5), 0 4px 24px rgba(0,0,0,0.6);
+  line-height: 1;
+  animation: countdown-pop 0.9s ease-out forwards;
+}
+
+.countdown-overlay__go {
+  font-family: var(--font-display);
+  font-size: 130px;
+  font-weight: 800;
+  color: var(--accent);
+  text-shadow: 0 0 80px rgba(52, 211, 153, 0.9), 0 4px 24px rgba(0,0,0,0.6);
+  line-height: 1;
+  animation: countdown-pop 0.7s ease-out forwards;
+}
+
+@keyframes countdown-pop {
+  0%   { transform: scale(1.6); opacity: 0; }
+  25%  { transform: scale(1.0); opacity: 1; }
+  75%  { transform: scale(1.0); opacity: 1; }
+  100% { transform: scale(0.7); opacity: 0; }
+}
