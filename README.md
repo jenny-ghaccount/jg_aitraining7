@@ -1,16 +1,50 @@
-# React + Vite
+# Recycle Rush
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A playful drag-and-drop sorting game that teaches recycling awareness. Help users learn how to sort waste correctly by moving flying waste items into the appropriate recycling bins.
 
-Currently, two official plugins are available:
+## About the Game
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+**Recycle Rush** is an interactive web game designed to build recycling awareness through fun gameplay:
+- Drag and drop waste items into the correct bins (general waste, paper, plastic, and organic waste)
+- Earn points for correct sorting
+- Race against the clock in 60-second rounds
+- Get immediate visual feedback on your sorting accuracy
 
-## React Compiler
+Perfect for teams and communities looking to promote sustainable waste management in an engaging way.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Prerequisites
 
-## Expanding the ESLint configuration
+- Node.js (v16 or higher)
+- npm (v7 or higher)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Installation
+
+1. Clone the repository
+2. Navigate to the project directory
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+## Running the Game
+
+To start the development server:
+```bash
+npm run dev
+```
+
+The game will be available at `http://localhost:5173` (or another port if 5173 is in use).
+
+## Building for Production
+
+To create a production build:
+```bash
+npm run build
+```
+
+## Available Commands
+
+- `npm run dev` - Start the development server with hot module reloading
+- `npm run build` - Build the project for production
+- `npm run preview` - Preview the production build locally
+- `npm run lint` - Run ESLint to check code quality
